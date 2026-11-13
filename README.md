@@ -17,3 +17,11 @@ Installez un JDK 17 ou ultérieur et vérifiez que `java` et `javac` sont access
 `MazeGenerator` applique un parcours en profondeur aléatoire avec retour arrière (*Recursive Backtracker*). Depuis la case courante, il choisit une case voisine encore inexplorée, à deux pas, et ouvre le mur entre les deux. Quand il est bloqué, il remonte dans la pile. Chaque nouvelle case se raccorde par un seul passage au réseau déjà creusé, ce qui donne un labyrinthe connexe et sans cycle. [Présentation de l'algorithme par Jamis Buck](https://weblog.jamisbuck.org/2010/12/27/maze-generation-recursive-backtracking).
 
 La génération accepte des grilles d'au moins 3 × 3, paires ou impaires. L'arrivée occupe la dernière case du réseau, aux coordonnées paires en bas à droite. Une dernière ligne ou colonne de murs complète les dimensions paires. Un générateur aléatoire fourni par l'appelant permet de reproduire un labyrinthe à partir d'une graine fixe.
+
+## Résolution en cours
+
+`MazeSolver` définit le contrat de résolution. `AbstractSolver` reconstruit le chemin en remontant les parents et `SearchResult` conserve l'ordre d'exploration, le chemin et le temps de calcul. La longueur du chemin compte les déplacements et vaut `-1` lorsque le résultat est vide.
+
+Le prototype BFS initialise sa file avec le départ et ses voisins immédiats. Il retrouve une arrivée adjacente, mais renvoie un résultat vide sur un couloir `S.E` malgré le chemin de deux déplacements. À ce stade, un résultat vide du prototype peut donc aussi indiquer une exploration incomplète.
+
+Il reste à découvrir les voisins de chaque case retirée de la file et à les marquer dès leur ajout. Cela évite les entrées en double et conserve le premier parent découvert. Le DFS reste à implémenter.
