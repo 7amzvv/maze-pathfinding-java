@@ -1,13 +1,9 @@
 import model.Grid;
+import model.MazeGenerator;
 
 public final class Main {
     public static void main(String[] args) {
-        Grid grid = new Grid(5, 9);
-        grid.setWall(0, 3, true);
-        grid.setWall(1, 3, true);
-        grid.setWall(2, 3, true);
-        grid.setWall(3, 6, true);
-        grid.setWall(4, 6, true);
+        Grid grid = new MazeGenerator().generate(15, 31);
 
         for (int row = 0; row < grid.getRows(); row++) {
             StringBuilder line = new StringBuilder();
