@@ -6,7 +6,17 @@ Projet Java consacré à la génération et à la résolution de labyrinthes. La
 
 Installez un JDK 17 ou ultérieur et vérifiez que `java` et `javac` sont accessibles depuis le `PATH`. Double-cliquez sur `run.bat` pour compiler les sources dans `bin/` et ouvrir la fenêtre Swing.
 
-Choisissez BFS, DFS ou A*, puis cliquez sur **Résoudre**. Les cases explorées s'affichent en bleu et le chemin en or. **Effacer** retire la visualisation du résultat tout en gardant le labyrinthe. **Générer** crée une grille aléatoire.
+1. Cliquez sur **Générer** pour créer un labyrinthe aléatoire.
+2. Dans **Édition**, choisissez **Mur** puis cliquez sur une case pour poser ou retirer un mur. Les modes **Déplacer S** et **Déplacer E** placent le marqueur sur une case libre.
+3. Choisissez BFS, DFS ou A*, puis cliquez sur **Résoudre**. Les cases explorées apparaissent successivement en bleu, puis le chemin s'affiche en or. Le bandeau affiche le nombre de cases visitées, la longueur en déplacements et le temps de calcul.
+
+**Effacer** retire le résultat en conservant la grille. Modifier la grille ou changer de solveur annule l'animation en cours.
+
+## Architecture
+
+- `model` contient la grille, les cases et le générateur.
+- `solver` implémente les trois parcours via `MazeSolver`. `AbstractSolver` partage la reconstruction du chemin et `SearchResult` transmet au visualiseur l'ordre d'exploration.
+- `view` contient le rendu dans `MazePanel` et les contrôles dans `MainFrame`. Sur la grille de 15 × 31, le calcul produit un résultat avant l'affichage. Un `javax.swing.Timer` révèle ensuite les cases une à une et affiche le chemin final. Le temps mesuré exclut cette animation.
 
 `S` représente le départ, `E` l'arrivée, `#` un mur et `.` une case libre.
 
@@ -44,3 +54,26 @@ Lancez `run.bat --no-pause --console` pour reproduire la comparaison. Chaque alg
 | Grille ouverte | A* | 45 | 44 | 1,353 |
 
 Sur la grille ouverte, A* suit un plus court chemin grâce à Manhattan et au départage en faveur de la case la plus proche de l'arrivée. Les détours du labyrinthe limitent ce gain. Les temps sont ceux d'une exécution sans échauffement de la JVM. Ils varient selon la machine et reflètent aussi le coût de la file de priorité.
+
+## Captures BFS et A*
+
+Lancez `run.bat --open-grid` pour ouvrir la même grille libre de 15 × 31. Les deux solveurs trouvent un chemin de 44 déplacements. BFS explore 465 cases et A* en explore 45.
+
+**BFS**
+
+![BFS colore les 465 cases explorées sur la grille ouverte](docs/bfs.png)
+
+**A\***
+
+![A* explore 45 cases sur la même grille](docs/astar.png)
+
+## Tests
+
+Depuis l'invite de commandes Windows, exécutez ces commandes à la racine du dépôt avec un JDK 17 ou ultérieur.
+
+```bat
+run.bat --no-pause --console
+java -cp bin test/SolverTest.java
+```
+
+Les trois tests vérifient le chemin au-delà de la première couche (`S.E`), l'arrivée bloquée puis rouverte (`S#E`), et le contournement d'un mur. Le dernier test exige aussi un plus court chemin de huit déplacements pour BFS et A*.
