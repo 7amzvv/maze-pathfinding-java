@@ -18,10 +18,9 @@ Installez un JDK 17 ou ultérieur et vérifiez que `java` et `javac` sont access
 
 La génération accepte des grilles d'au moins 3 × 3, paires ou impaires. L'arrivée occupe la dernière case du réseau, aux coordonnées paires en bas à droite. Une dernière ligne ou colonne de murs complète les dimensions paires. Un générateur aléatoire fourni par l'appelant permet de reproduire un labyrinthe à partir d'une graine fixe.
 
-## Résolution en cours
+## Résolution
 
 `MazeSolver` définit le contrat de résolution. `AbstractSolver` reconstruit le chemin en remontant les parents et `SearchResult` conserve l'ordre d'exploration, le chemin et le temps de calcul. La longueur du chemin compte les déplacements et vaut `-1` lorsque le résultat est vide.
 
-Le prototype BFS initialise sa file avec le départ et ses voisins immédiats. Il retrouve une arrivée adjacente, mais renvoie un résultat vide sur un couloir `S.E` malgré le chemin de deux déplacements. À ce stade, un résultat vide du prototype peut donc aussi indiquer une exploration incomplète.
-
-Il reste à découvrir les voisins de chaque case retirée de la file et à les marquer dès leur ajout. Cela évite les entrées en double et conserve le premier parent découvert. Le DFS reste à implémenter.
+- **BFS** explore par couches avec une file FIFO. Le prototype s'arrêtait après les voisins immédiats du départ et échouait sur `S.E`. L'exploration des voisins a été déplacée dans la boucle. Chaque case est marquée dès son ajout, ce qui évite les doublons et garantit un plus court chemin quand chaque déplacement coûte une unité.
+- **DFS** explore en profondeur avec une pile. Il marque chaque case lors de sa première extraction et ignore les entrées devenues redondantes. Le chemin trouvé dépend de l'ordre des voisins et peut être plus long que celui de BFS.

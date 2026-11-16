@@ -19,18 +19,19 @@ public final class BFSSolver extends AbstractSolver {
 
         start.setVisited(true);
         frontier.add(start);
-        for (Cell neighbor : grid.getNeighbors(start)) {
-            neighbor.setVisited(true);
-            neighbor.setParent(start);
-            frontier.add(neighbor);
-        }
-
         while (!frontier.isEmpty()) {
             Cell current = frontier.remove();
             explored.add(current);
             if (current == end) {
                 List<Cell> path = reconstructPath(start, end);
                 return new SearchResult(explored, path, System.nanoTime() - startedAt);
+            }
+            for (Cell neighbor : grid.getNeighbors(current)) {
+                if (!neighbor.isVisited()) {
+                    neighbor.setVisited(true);
+                    neighbor.setParent(current);
+                    frontier.add(neighbor);
+                }
             }
         }
         return new SearchResult(explored, List.of(), System.nanoTime() - startedAt);
