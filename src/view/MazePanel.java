@@ -7,12 +7,16 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import model.Cell;
 import model.Grid;
-import solver.SearchResult;
 
 public final class MazePanel extends JPanel {
     private static final Color BACKGROUND = new Color(0x111827);
@@ -24,13 +28,24 @@ public final class MazePanel extends JPanel {
     private static final Color END = new Color(0x9C3659);
 
     private Grid grid;
-    private Set<Cell> explored = Set.of();
-    private Set<Cell> path = Set.of();
+    private final Set<Cell> explored = new HashSet<>();
+    private final Set<Cell> path = new HashSet<>();
 
-    public MazePanel(Grid grid) {
+    public MazePanel(Grid grid, Consumer<Cell> onCellClick) {
         this.grid = grid;
         setBackground(BACKGROUND);
         setPreferredSize(new Dimension(860, 430));
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent event) {
+                if (SwingUtilities.isLeftMouseButton(event)) {
+                    Cell cell = cellAt(event.getX(), event.getY());
+                    if (cell != null) {
+                        onCellClick.accept(cell);
+                    }
+                }
+            }
+        });
     }
 
     public void setGrid(Grid grid) {
@@ -39,27 +54,30 @@ public final class MazePanel extends JPanel {
     }
 
     public void clearResult() {
-        path = Set.of();
-        explored = Set.of();
+        path.clear();
+        explored.clear();
         repaint();
     }
 
-    public void showResult(SearchResult result) {
-        explored = new HashSet<>(result.explored());
-        path = new HashSet<>(result.path());
+    public void showExplored(Cell cell) {
+        explored.add(cell);
+        repaint();
+    }
+
+    public void showPath(Collection<Cell> cells) {
+        path.addAll(cells);
         repaint();
     }
 
     @Override
     protected void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
-        int size = Math.min((getWidth() - 24) / grid.getCols(),
-                (getHeight() - 24) / grid.getRows());
+        int size = cellSize();
         if (size < 1) {
             return;
         }
-        int left = (getWidth() - size * grid.getCols()) / 2;
-        int top = (getHeight() - size * grid.getRows()) / 2;
+        int left = gridLeft(size);
+        int top = gridTop(size);
         Graphics2D canvas = (Graphics2D) graphics.create();
         try {
             canvas.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -73,6 +91,30 @@ public final class MazePanel extends JPanel {
         } finally {
             canvas.dispose();
         }
+    }
+
+    private int cellSize() {
+        return Math.min((getWidth() - 24) / grid.getCols(), (getHeight() - 24) / grid.getRows());
+    }
+
+    private int gridLeft(int size) {
+        return (getWidth() - size * grid.getCols()) / 2;
+    }
+
+    private int gridTop(int size) {
+        return (getHeight() - size * grid.getRows()) / 2;
+    }
+
+    private Cell cellAt(int x, int y) {
+        int size = cellSize();
+        int localX = x - gridLeft(size);
+        int localY = y - gridTop(size);
+        if (size < 1 || localX < 0 || localY < 0) {
+            return null;
+        }
+        int row = localY / size;
+        int col = localX / size;
+        return grid.isInBounds(row, col) ? grid.getCell(row, col) : null;
     }
 
     private void paintCell(Graphics2D canvas, Cell cell, int x, int y, int size) {
