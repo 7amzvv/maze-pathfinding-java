@@ -11,7 +11,7 @@ set "sources=bin\sources.txt"
 )
 if errorlevel 1 goto failure
 javac --release 17 -encoding UTF-8 -d bin @"%sources%" || goto failure
-java -cp bin Main || goto failure
+java -cp bin Main %* || goto failure
 popd
 if /i not "%~1"=="--no-pause" pause
 exit /b 0

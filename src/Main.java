@@ -1,14 +1,25 @@
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Random;
+import javax.swing.SwingUtilities;
 import model.Grid;
 import model.MazeGenerator;
 import solver.AStarSolver;
 import solver.BFSSolver;
 import solver.DFSSolver;
 import solver.SearchResult;
+import view.MainFrame;
 
 public final class Main {
     public static void main(String[] args) {
+        if (Arrays.asList(args).contains("--console")) {
+            runConsoleComparison();
+        } else {
+            SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
+        }
+    }
+
+    private static void runConsoleComparison() {
         Grid maze = new MazeGenerator(new Random(42)).generate(15, 31);
         printGrid(maze);
         compare("Labyrinthe 15 x 31 (graine 42)", maze);

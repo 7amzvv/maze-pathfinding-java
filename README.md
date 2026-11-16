@@ -4,7 +4,9 @@ Projet Java consacré à la génération et à la résolution de labyrinthes. La
 
 ## Lancement sous Windows
 
-Installez un JDK 17 ou ultérieur et vérifiez que `java` et `javac` sont accessibles depuis le `PATH`. Double-cliquez sur `run.bat` pour compiler les sources dans `bin/` et afficher la grille.
+Installez un JDK 17 ou ultérieur et vérifiez que `java` et `javac` sont accessibles depuis le `PATH`. Double-cliquez sur `run.bat` pour compiler les sources dans `bin/` et ouvrir la fenêtre Swing.
+
+Choisissez BFS, DFS ou A*, puis cliquez sur **Résoudre**. Les cases explorées s'affichent en bleu et le chemin en or. **Effacer** retire la visualisation du résultat tout en gardant le labyrinthe. **Générer** crée une grille aléatoire.
 
 `S` représente le départ, `E` l'arrivée, `#` un mur et `.` une case libre.
 
@@ -30,7 +32,7 @@ Si un meilleur coût est découvert, le solveur retire la case de la `PriorityQu
 
 ## Comparaison console
 
-Chaque algorithme résout les mêmes deux grilles de 15 × 31. Une case compte comme explorée lors de son extraction pour traitement, arrivée incluse. Une exécution de `run.bat` a donné les résultats suivants.
+Lancez `run.bat --no-pause --console` pour reproduire la comparaison. Chaque algorithme résout les mêmes deux grilles de 15 × 31. Une case compte comme explorée lors de son extraction pour traitement, arrivée incluse. Une exécution a donné les résultats suivants.
 
 | Grille | Algorithme | Cases explorées | Déplacements | Temps (ms) |
 | --- | --- | ---: | ---: | ---: |
